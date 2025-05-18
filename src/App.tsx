@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
-import './App.css'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Slider } from "@/components/ui/slider"
 
 function App() {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -111,61 +113,73 @@ function App() {
   }
 
   return (
-    <div className="app-container">
-      <h1>Timelapse Camera</h1>
+    <div className="flex flex-col items-center gap-6 max-w-5xl mx-auto p-8">
+      <h1 className="text-3xl font-bold">Timelapse Camera</h1>
       
-      <div className="camera-container">
-        <video 
-          ref={videoRef} 
-          autoPlay 
-          playsInline 
-          className="camera-feed"
-        />
-        <canvas ref={canvasRef} style={{ display: 'none' }} />
-      </div>
-      
-      <div className="controls">
-        <div className="status-bar">
-          Status: {status}
-        </div>
-        
-        <div className="control-row">
-          <button 
-            onClick={takePicture} 
-            disabled={capturing}
-            className="control-button"
-          >
-            Take Picture
-          </button>
-          
-          <button 
-            onClick={toggleCapture} 
-            className={`control-button ${capturing ? 'stop' : 'start'}`}
-          >
-            {capturing ? 'Stop Capture' : 'Start Automatic Capture'}
-          </button>
-        </div>
-        
-        <div className="interval-control">
-          <label htmlFor="interval">Capture Interval (seconds): </label>
-          <input 
-            id="interval"
-            type="number" 
-            min="1" 
-            max="3600"
-            value={captureInterval}
-            onChange={(e) => setCaptureInterval(Number(e.target.value))}
-            disabled={capturing}
+      <Card className="w-full">
+        <CardContent className="p-0 overflow-hidden">
+          <video 
+            ref={videoRef} 
+            autoPlay 
+            playsInline 
+            className="w-full"
           />
-        </div>
-      </div>
+          <canvas ref={canvasRef} className="hidden" />
+        </CardContent>
+      </Card>
+      
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle className="text-lg">Status: {status}</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          <div className="flex gap-4">
+            <Button 
+              variant="outline"
+              onClick={takePicture} 
+              disabled={capturing}
+              className="flex-1"
+            >
+              Take Picture
+            </Button>
+            
+            <Button 
+              onClick={toggleCapture} 
+              variant={capturing ? "destructive" : "default"}
+              className="flex-1"
+            >
+              {capturing ? 'Stop Capture' : 'Start Automatic Capture'}
+            </Button>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <label htmlFor="interval" className="min-w-40">Capture Interval (seconds): {captureInterval}</label>
+            <Slider
+              id="interval"
+              disabled={capturing}
+              min={1}
+              max={60}
+              step={1}
+              value={[captureInterval]}
+              onValueChange={(values) => setCaptureInterval(values[0])}
+              className="flex-1"
+            />
+          </div>
+        </CardContent>
+      </Card>
       
       {lastCapture && (
-        <div className="last-capture">
-          <h3>Last Captured Image</h3>
-          <img src={lastCapture} alt="Last capture" className="thumbnail" />
-          <p>Captured at: {new Date().toLocaleTimeString()}</p>
-        </div>
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle className="text-lg">Last Captured Image</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center">
+            <img src={lastCapture} alt="Last capture" className="max-h-60 rounded-md" />
+          </CardContent>
+          <CardFooter>
+            <p>Captured at: {new Date().toLocaleTimeString()}</p>
+          </CardFooter>
+        </Card>
       )}
     </div>
   )
