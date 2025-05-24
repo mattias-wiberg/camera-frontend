@@ -263,7 +263,7 @@ function App() {
       setLastCapture(imageData);
       
       setStatus('Sending image...');
-      const response = await fetch('http://localhost:3000/timelapse/upload', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/timelapse/upload`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
